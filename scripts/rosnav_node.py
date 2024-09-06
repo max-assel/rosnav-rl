@@ -65,6 +65,12 @@ class RosnavNode:
             self.agent_path
         ), f"Model cannot be found at {self.agent_path}"
 
+        print("self.agent_path before: ", self.agent_path)
+
+        self.agent_path = self.agent_path.replace(self.agent_name, "jackal_RosnavResNet_3_2024_01_22__07_05_11")
+
+        print("self.agent_path after: ", self.agent_path)
+
         # Load hyperparams
         self._hyperparams = RosnavNode._load_hyperparams(self.agent_path)
         rospy.set_param("rl_agent", self._hyperparams["rl_agent"])
@@ -72,6 +78,8 @@ class RosnavNode:
         self._setup_action_space(self._hyperparams)
 
         populate_laser_params(self._hyperparams)
+
+        print("self._hyperparams: ", self._hyperparams)
 
         # Get Architecture Name and retrieve Observation spaces
         architecture_name = self._hyperparams["rl_agent"]["architecture_name"]
