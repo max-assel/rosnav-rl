@@ -86,6 +86,43 @@ class StackedLaserMapSpace(BaseFeatureMapSpace):
         if len(self._laser_queue) == 0:
             self._reset_laser_stack(laser_scan)
 
+        # print("incoming laser scan size: ", np.shape(laser_scan))
+
+        if (len(laser_scan) == 512):
+
+            self.scan_size_des = 720
+            self.scan_angle_increment_des = 2 * np.pi / (self.scan_size_des - 1)
+
+            range_size = len(laser_scan)
+            angle_increment_orig = 2 * np.pi / (range_size - 1)
+
+            self.scan_tmp = np.zeros(self.scan_size_des)
+            for i in range(0, self.scan_size_des):
+                theta = (i - self.scan_size_des/2) * self.scan_angle_increment_des
+                
+                idx_low = int(np.floor( (theta + np.pi) / angle_increment_orig))
+                # print("orig idx_low: ", idx_low)
+                idx_low = np.max([0, idx_low])
+                # print("clip idx_low: ", idx_low)
+
+                theta_low = (idx_low - range_size/2) * angle_increment_orig
+                # print("theta_low: ", theta_low)
+
+                idx_high = int(np.ceil( (theta + np.pi) / angle_increment_orig))
+                # print("orig idx_high: ", idx_high)
+
+                idx_high = np.min([range_size - 1, idx_high])
+                # print("clip idx_high: ", idx_high)
+
+                theta_high = (idx_high - range_size/2) * angle_increment_orig
+                # print("theta_high: ", theta_high)
+
+                # print("scan_data[idx_low]: ", scan_data[idx_low])
+                # print("scan_data[idx_high]: ", scan_data[idx_high])
+
+                self.scan_tmp[i] = laser_scan[idx_low] + ((theta - theta_low) / (0.000000000001 + theta_high - theta_low)) * (laser_scan[idx_high] - laser_scan[idx_low])
+            laser_scan = self.scan_tmp
+
         self._laser_queue.pop()
         self._laser_queue.appendleft(laser_scan)
 
@@ -124,6 +161,9 @@ class StackedLaserMapSpace(BaseFeatureMapSpace):
             # scan_avg_map = np.tile(scan_avg.ravel(), 4).reshape(
             #     (self._feature_map_size, self._feature_map_size)
             # )
+            print("np.shape(laser_queue): ", np.shape(laser_queue))
+
+
             temp = np.array(laser_queue, dtype=np.float32).flatten()
             scan_avg = np.zeros((20, 80))
             for n in range(10):

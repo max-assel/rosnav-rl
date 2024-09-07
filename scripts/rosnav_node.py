@@ -87,8 +87,12 @@ class RosnavNode:
         observation_spaces: List[BaseObservationSpace] = agent.observation_spaces
         observation_spaces_kwargs = agent.observation_space_kwargs
 
+        print("before self._load_env_wrappers: ")
+
         # Load observation normalization and frame stacking
         self._load_env_wrappers(self._hyperparams, agent)
+
+        print("before RosnavSpaceManager: ")
 
         # Set RosnavSpaceEncoder as Middleware
         self._encoder = RosnavSpaceManager(
@@ -98,6 +102,8 @@ class RosnavNode:
             action_space_kwargs=None,
         )
 
+       # print("before model: ")
+
         # Load the model
         self._agent = self._get_model(
             architecture_name=architecture_name,
@@ -106,6 +112,8 @@ class RosnavNode:
         )
 
         self._observation_manager = ObservationManager(self.ns)
+
+        # print("service name: ", self.ns("rosnav/get_action"))
 
         self._get_next_action_srv = rospy.Service(
             self.ns("rosnav/get_action"), GetAction, self._handle_next_action_srv
@@ -140,18 +148,29 @@ class RosnavNode:
         Returns:
             None
         """
+        print("     [_load_env_wrappers()]")
         # Load observation normalization and frame stacking
+
+        print("     _normalized_mode")
+
         self._normalized_mode = hyperparams["rl_agent"]["normalize"]
+        print("     _reduced_laser_mode")
+
         self._reduced_laser_mode = (
             hyperparams["rl_agent"]["laser"]["reduce_num_beams"]["enabled"]
             if "laser" in hyperparams["rl_agent"]
             else False
         )
+
+        print("     _stacked_mode")
+
         self._stacked_mode = (
             hyperparams["rl_agent"]["frame_stacking"]["enabled"]
             if "frame_stacking" in hyperparams["rl_agent"]
             else False
         )
+
+        print("     before if 1")
 
         if self._stacked_mode:
             self._vec_stacked = RosnavNode._get_vec_stacked(
@@ -161,10 +180,17 @@ class RosnavNode:
         else:
             self._vec_stacked = None
 
+        print("     before if 2")
+
         if self._normalized_mode:
+            print("before get_vec_normalize()")
             self._vec_normalize = RosnavNode._get_vec_normalize(
                 agent_description, self.agent_path, self._hyperparams, self._vec_stacked
             )
+            print("after get_vec_normalize()")
+
+        print("     after 2")
+
 
     def _encode_observation(self, observation: Dict[str, Any]):
         """
@@ -230,6 +256,8 @@ class RosnavNode:
 
         decoded_action = self._encoder.decode_action(action)
 
+        print("decoded_action: ", decoded_action )
+
         self._last_action = decoded_action
 
         return decoded_action
@@ -244,6 +272,7 @@ class RosnavNode:
         Returns:
             GetActionResponse: The service response containing the next action.
         """
+        print("[_handle_next_action_srv]")
         action = self.get_action()
 
         response = GetActionResponse()
@@ -340,10 +369,17 @@ class RosnavNode:
         Returns:
             object: Vector normalizer for the RL agent.
         """
+        print("     _get_vec_normalize()")
+
         if venv is None:
+            print("venv is none")
             venv = make_mock_env(agent_description)
+
+        print("     before checkpoint")
         checkpoint = hyperparams["rl_agent"]["checkpoint"]
+        print("     before ospathjoun")
         vec_normalize_path = os.path.join(agent_path, f"vec_normalize_{checkpoint}.pkl")
+        print("     before return")
         return load_vec_normalize(vec_normalize_path, hyperparams["rl_agent"], venv)
 
     @staticmethod

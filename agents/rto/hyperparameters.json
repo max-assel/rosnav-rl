@@ -20,9 +20,5 @@
   "gae_lambda": 0.95,
   "m_batch_size": 15,
   "n_epochs": 3,
-  "clip_range": 0.22,
-  "architecture_name": "RosnavResNet_3",
-  "checkpoint": "best_model",
-  "frame_stacking": { "enabled" : false},
-  "laser" : {"reduce_num_beams" : { "enabled" : false} }
+  "clip_range": 0.22
 }

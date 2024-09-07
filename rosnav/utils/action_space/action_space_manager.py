@@ -149,11 +149,12 @@ class ActionSpaceManager:
             np.ndarray: The extended action array.
         """
         if self._holonomic:
-            assert (
-                self._holonomic and len(action) == 3
-            ), "Robot is holonomic but action with only two freedoms of movement provided"
+            # print(action)
+            # assert (
+            #     self._holonomic and len(action) == 3
+            # ), "Robot is holonomic but action with only two freedoms of movement provided"
 
-            return action
+            return np.array([action[0], 0, action[1]])
         else:
             assert (
                 not self._holonomic and len(action) == 2
