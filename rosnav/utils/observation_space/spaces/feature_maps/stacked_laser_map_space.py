@@ -161,7 +161,7 @@ class StackedLaserMapSpace(BaseFeatureMapSpace):
             # scan_avg_map = np.tile(scan_avg.ravel(), 4).reshape(
             #     (self._feature_map_size, self._feature_map_size)
             # )
-            print("np.shape(laser_queue): ", np.shape(laser_queue))
+            # print("np.shape(laser_queue): ", np.shape(laser_queue))
 
 
             temp = np.array(laser_queue, dtype=np.float32).flatten()

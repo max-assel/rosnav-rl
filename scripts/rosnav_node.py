@@ -256,7 +256,6 @@ class RosnavNode:
 
         decoded_action = self._encoder.decode_action(action)
 
-        print("decoded_action: ", decoded_action )
 
         self._last_action = decoded_action
 
@@ -272,8 +271,10 @@ class RosnavNode:
         Returns:
             GetActionResponse: The service response containing the next action.
         """
-        print("[_handle_next_action_srv]")
+        # print("[_handle_next_action_srv]")
         action = self.get_action()
+
+        print("action: ", action )
 
         response = GetActionResponse()
         response.action = action
