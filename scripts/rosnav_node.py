@@ -151,10 +151,8 @@ class RosnavNode:
         print("     [_load_env_wrappers()]")
         # Load observation normalization and frame stacking
 
-        print("     _normalized_mode")
 
         self._normalized_mode = hyperparams["rl_agent"]["normalize"]
-        print("     _reduced_laser_mode")
 
         self._reduced_laser_mode = (
             hyperparams["rl_agent"]["laser"]["reduce_num_beams"]["enabled"]
@@ -162,15 +160,11 @@ class RosnavNode:
             else False
         )
 
-        print("     _stacked_mode")
-
         self._stacked_mode = (
             hyperparams["rl_agent"]["frame_stacking"]["enabled"]
             if "frame_stacking" in hyperparams["rl_agent"]
             else False
         )
-
-        print("     before if 1")
 
         if self._stacked_mode:
             self._vec_stacked = RosnavNode._get_vec_stacked(
@@ -180,17 +174,12 @@ class RosnavNode:
         else:
             self._vec_stacked = None
 
-        print("     before if 2")
-
         if self._normalized_mode:
             print("before get_vec_normalize()")
             self._vec_normalize = RosnavNode._get_vec_normalize(
                 agent_description, self.agent_path, self._hyperparams, self._vec_stacked
             )
             print("after get_vec_normalize()")
-
-        print("     after 2")
-
 
     def _encode_observation(self, observation: Dict[str, Any]):
         """
@@ -256,6 +245,7 @@ class RosnavNode:
 
         decoded_action = self._encoder.decode_action(action)
 
+        print(self._encoder.get_action_space())
 
         self._last_action = decoded_action
 

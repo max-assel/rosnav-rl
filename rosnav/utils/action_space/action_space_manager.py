@@ -44,6 +44,11 @@ class ActionSpaceManager:
 
         self._space = self.get_action_space()
 
+        print("self._holonomic: ", self._holonomic)
+        print("self._discrete: ", self._discrete)
+        print("self._actions: ", self._actions)
+        print("self._space: ", self._space)
+
     @property
     def actions(self):
         """
@@ -87,6 +92,9 @@ class ActionSpaceManager:
         linear_range = self._actions["linear_range"]
         angular_range = self._actions["angular_range"]
 
+        print("linear_range: ", linear_range)
+        print("angular_range: ", angular_range)
+
         if not self._holonomic:
             return spaces.Box(
                 low=np.array([linear_range[0], angular_range[0]]),
@@ -94,10 +102,16 @@ class ActionSpaceManager:
                 dtype=np.float32,
             )
 
-        linear_range_x, linear_range_y = (
-            linear_range["x"],
-            linear_range["y"],
-        )
+        # linear_range_x, linear_range_y = (
+        #     linear_range["x"],
+        #     linear_range["y"],
+        # )
+        linear_range_x = [-1.0, 1.0]
+        linear_range_y = [-1.0, 1.0]
+
+        print("linear_range_x: ", linear_range_x)
+        print("linear_range_y: ", linear_range_y)
+
 
         return spaces.Box(
             low=np.array(

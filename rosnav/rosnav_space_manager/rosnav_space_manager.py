@@ -47,13 +47,15 @@ class RosnavSpaceManager:
         observation_space_kwargs = observation_space_kwargs or {}
         action_space_kwargs = action_space_kwargs or {}
 
+        # self._stacked = False
         self._stacked = rospy.get_param_cached("rl_agent/frame_stacking/enabled")
+        # self._laser_num_beams = 512
         self._laser_num_beams = (
             rospy.get_param_cached("laser/num_beams")
             if not rospy.get_param("laser/reduce_num_beams")
             else rospy.get_param("laser/reduced_num_laser_beams")
         )
-        self._laser_max_range = rospy.get_param_cached("laser/range")
+        self._laser_max_range = rospy.get_param_cached("laser/range") # 5.0 # 
         self._radius = rospy.get_param_cached("robot_radius")
         self._is_holonomic = rospy.get_param_cached("is_holonomic")
 
@@ -64,6 +66,7 @@ class RosnavSpaceManager:
         self._ped_min_speed_y = -5.0
         self._ped_max_speed_y = 5.0
 
+        # is_action_space_discrete = False
         is_action_space_discrete = rospy.get_param_cached(
             "rl_agent/action_space/discrete", False
         )
@@ -103,8 +106,8 @@ class RosnavSpaceManager:
             observation_kwargs=_observation_kwargs,
         )
 
-        if rospy.get_param("laser/reduce_num_beams"):
-            self._encoder = ReducedLaserWrapper(self._encoder, self._laser_num_beams)
+        # if rospy.get_param("laser/reduce_num_beams"):
+        #     self._encoder = ReducedLaserWrapper(self._encoder, self._laser_num_beams)
 
     @property
     def observation_space_manager(self):

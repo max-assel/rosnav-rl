@@ -60,6 +60,18 @@ class AGENT_23(BaseAgent):
     net_arch = [128, 64, 64, 64]
     activation_fn = nn.ReLU
 
+    observation_spaces = [
+        SPACE_INDEX.STACKED_LASER_MAP,
+        SPACE_INDEX.PEDESTRIAN_LOCATION,
+        SPACE_INDEX.PEDESTRIAN_TYPE,
+        SPACE_INDEX.GOAL,
+    ]
+
+    observation_space_kwargs = {
+        "roi_in_m": 20,
+        "feature_map_size": 80,
+        "laser_stack_size": 10,
+    }
 
 # lstm
 @AgentFactory.register("AGENT_32")
